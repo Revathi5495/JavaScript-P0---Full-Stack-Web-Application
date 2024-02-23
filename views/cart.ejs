@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="full-page">
+    <div class="navbar">
+      <div>
+        <a href='home.html'>Rent Movies</a>
+      </div>
+      <nav>
+        <ul id='MenuItems'>
+          <li><a href='#'>Home</a></li>
+          <li><a href='/orders'>Watchlist</a></li>
+          <li><a href='#'>Contact</a></li>
+          <li id="cart-link"><a href='/cartItems'>Cart</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <section class="movie-list">
+      <% movies.forEach(movie => { %>
+        <div class="movie">
+          <img src="<%= movie.image_url %>" alt="Movie 1">
+          <h2> <%= movie.title %></h2>
+          <span><%= movie.rating %></span>
+          <span><%= movie.released_year %></span>
+          <span><%= movie.category%></span>
+          <button class="add-to-cart"  data-title="<%= movie.title %>" data-rating="<%= movie.rating %>" data-image="<%= movie.image_url %>">Add to Cart</button>
+        </div>
+      <% }); %>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+      addToCartButtons.forEach(button => {
+        button.addEventListener("click", function() {
+          
+          const title = button.getAttribute('data-title');
+          const rating = button.getAttribute('data-rating');
+          const image_url = button.getAttribute('data-image');
+
+          // Send data to server to add to cart
+          addToCart(title, rating, image_url);
+
+          // Disable button and change text to "Unavailable"
+          button.textContent = "Unavailable";
+          button.disabled = true;
+        });
+      });
+    });
+
+    function addToCart(title, rating, image_url) {
+      fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ title: title, rating: rating, image_url: image_url })
+      })
+      .then(response => {
+        if (!response.ok) {
+          console.error('Error adding to cart:', response.statusText);
+          // Optionally, you can display an error message or handle the error in another way
+        }
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        // Optionally, you can display an error message or handle the error in another way
+      });
+    }
+  </script>
+</body>
+</html>
