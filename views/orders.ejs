@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="/cart-styles.css">
+</head>
+<body>
+    <h1>Rented Movies</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Rating</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% orders.forEach(order => { %>
+            <tr>
+                <td><%= order.title %></td>
+                <td><%= order.rating %></td>
+                <td><img src="<%= order.image_url %>" alt="<%= order.title %>" style="width: 100px;"></td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <button onclick="clearOrders()">Clear</button>
+
+    <script>
+        function clearOrders() {
+            // Clear the HTML table
+            document.querySelector('tbody').innerHTML = '';
+
+            // Send a request to clear orders on the server
+            fetch('/clearOrders', {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Orders cleared successfully.');
+                } else {
+                    console.error('Error clearing orders:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Error clearing orders:', error));
+        }
+    </script>
+</body>
+</html>

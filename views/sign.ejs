@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In / Register</title>
+    <link rel="stylesheet" href="/sign-styles.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="form-container" id="signin-form-container">
+            <!-- Sign-in form -->
+            <h2>Sign In</h2>
+            <form id="signin-form">
+                <input type="email" id="signin-email" placeholder="Email" required>
+                <input type="password" id="signin-password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+            <p class="error-message" id="signin-error-message"></p>
+            <p>Don't have an account? <a href="#" id="toggle-register">Register</a></p>
+        </div>
+    
+        <div class="form-container" id="register-form-container" style="display: none;">
+            <!-- Register form -->
+            <h2>Register</h2>
+            <form id="register-form">
+                <input type="text" id="register-username" placeholder="Username" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p class="error-message" id="register-error-message"></p>
+            <p>Already have an account? <a href="#" id="toggle-signin">Sign In</a></p>
+        </div>
+    </div>
+    
+    
+
+
+    <script>
+     
+     document.addEventListener('DOMContentLoaded', () => {
+    const signinFormContainer = document.getElementById('signin-form-container');
+    const registerFormContainer = document.getElementById('register-form-container');
+    const toggleRegisterLink = document.getElementById('toggle-register');
+    const toggleSigninLink = document.getElementById('toggle-signin');
+
+    toggleRegisterLink.addEventListener('click', () => {
+        signinFormContainer.style.display = 'none';
+        registerFormContainer.style.display = 'block';
+    });
+
+    toggleSigninLink.addEventListener('click', () => {
+        signinFormContainer.style.display = 'block';
+        registerFormContainer.style.display = 'none';
+    });
+    });
+
+
+
+
+    document.getElementById('signin-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
+
+    try {
+    const response = await fetch('/signin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+    if (response.ok) {
+        alert('Sign in successful!');
+        // Redirect to /index route upon successful sign-in
+        window.location.href = '/index';
+    } else {
+        alert(data.message); // Show error message from backend
+    }
+} catch (error) {
+    console.error('Error:', error);
+}
+
+});
+
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('register-username').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+
+    try {
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert('Registration successful!');
+            // Redirect to another page or perform further actions
+        } else {
+            alert(data.message); // Show error message from backend
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+</script>
+</body>
+</html>
